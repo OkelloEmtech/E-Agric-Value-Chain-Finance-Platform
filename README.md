@@ -218,7 +218,7 @@ All endpoints are prefixed `/api/v1/`. Authentication via `Authorization: Bearer
 
 33 tables across 10 domains. All monetary values stored as `BIGINT` in minor currency units (UGX). All PKs and FKs are UUIDs. PII fields (NIN, MSISDN) are AES-256 encrypted at field level.
 
-See [`docs/DB_Schema_EAVCFP_v2.docx`](./docs/DB_Schema_EAVCFP_v2.docx) for full schema documentation.
+See https://github.com/OkelloEmtech/E-Agric-Value-Chain-Finance-Platform/blob/main/DB_Schema_EAVCFP.docx for full schema documentation.
 
 ---
 
