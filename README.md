@@ -121,7 +121,7 @@ eavcfp/
 | **Core Banking** | ISO 8583 CBS integration                         |
 | **Infra**        | Docker · Kubernetes · nginx                      |
 
----
+
 
 ## Getting Started
 
@@ -179,7 +179,7 @@ CBS_HOST=...
 CBS_PORT=8583
 ```
 
----
+
 
 ## API Overview
 
@@ -199,7 +199,7 @@ All endpoints are prefixed `/api/v1/`. Authentication via `Authorization: Bearer
 
 
 
----
+
 
 ## Roles
 
@@ -212,7 +212,7 @@ All endpoints are prefixed `/api/v1/`. Authentication via `Authorization: Bearer
 | `AGGREGATOR_WORKER` | Collection recording, aggregator invoices                                   |
 | `BUYER_WORKER`      | Payment initiation, contract management                                     |
 
----
+
 
 ## Database
 
@@ -220,7 +220,7 @@ All endpoints are prefixed `/api/v1/`. Authentication via `Authorization: Bearer
 
 See https://github.com/OkelloEmtech/E-Agric-Value-Chain-Finance-Platform/blob/main/DB_Schema_EAVCFP.docx for full schema documentation.
 
----
+
 
 ## Compliance
 
@@ -229,6 +229,6 @@ See https://github.com/OkelloEmtech/E-Agric-Value-Chain-Finance-Platform/blob/ma
 - Uganda Data Protection & Privacy Act 2019 — PII encryption, consent management
 - Audit log retained 7 years — immutable, cryptographically signed
 
----
+
 
 
