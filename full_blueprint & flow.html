@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>E-AVCFP Ecosystem Diagram</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@300;400;600;700&display=swap');
+
+  :root {
+    --bg: #0a0f1e;
+    --panel: #0d1528;
+    --border: #1e2d4a;
+    --money: #00e5a0;
+    --goods: #f5c542;
+    --data: #ff7b54;
+    --float: #54c5f8;
+    --anchor: #c084fc;
+    --bank: #60a5fa;
+    --farmer: #4ade80;
+    --supplier: #fbbf24;
+    --aggregator: #f87171;
+    --retailer: #34d399;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --dim: #1e3a5f;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100vh;
+    padding: 32px 24px;
+  }
+
+  h1 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--float);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-family: 'IBM Plex Mono', monospace;
+    margin-bottom: 32px;
+    letter-spacing: 0.05em;
+  }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 36px;
+    padding: 14px 18px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.72rem;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--text);
+    letter-spacing: 0.04em;
+  }
+
+  .legend-line {
+    width: 36px;
+    height: 3px;
+    border-radius: 2px;
+  }
+
+  .legend-line.dashed {
+    background: repeating-linear-gradient(90deg, var(--data) 0, var(--data) 6px, transparent 6px, transparent 10px);
+    height: 2px;
+  }
+
+  /* DIAGRAM WRAPPER */
+  .diagram {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+  }
+
+  /* LAYER ROWS */
+  .layer {
+    display: flex;
+    justify-content: center;
+    align-items: stretch;
+    gap: 24px;
+    padding: 0 8px;
+    position: relative;
+  }
+
+  /* NODES */
+  .node {
+    border-radius: 10px;
+    padding: 16px 20px;
+    border: 2px solid;
+    min-width: 160px;
+    max-width: 220px;
+    flex: 1;
+    position: relative;
+    background: var(--panel);
+  }
+
+  .node-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .node-activities {
+    font-size: 0.68rem;
+    color: #94a3b8;
+    line-height: 1.6;
+    list-style: none;
+  }
+
+  .node-activities li::before {
+    content: '▸ ';
+    opacity: 0.5;
+  }
+
+  .node-tag {
+    display: inline-block;
+    font-size: 0.6rem;
+    font-family: 'IBM Plex Mono', monospace;
+    padding: 2px 7px;
+    border-radius: 4px;
+    margin-top: 8px;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+  }
+
+  /* Node color variants */
+  .node.bank    { border-color: var(--bank);     }
+  .node.bank    .node-title { color: var(--bank); }
+  .node.anchor  { border-color: var(--anchor);   }
+  .node.anchor  .node-title { color: var(--anchor); }
+  .node.wallet  { border-color: var(--float);    }
+  .node.wallet  .node-title { color: var(--float); }
+  .node.farmer  { border-color: var(--farmer);   }
+  .node.farmer  .node-title { color: var(--farmer); }
+  .node.supplier{ border-color: var(--supplier); }
+  .node.supplier .node-title{ color: var(--supplier); }
+  .node.aggregator{ border-color: var(--aggregator);}
+  .node.aggregator .node-title{ color: var(--aggregator);}
+  .node.retailer{ border-color: var(--retailer); }
+  .node.retailer .node-title{ color: var(--retailer);}
+
+  /* CONNECTORS SECTION */
+  .connector-block {
+    margin: 0 auto 0;
+    width: 100%;
+    max-width: 960px;
+    padding: 0 16px;
+  }
+
+  /* FLOW ARROWS — vertical connectors between layers */
+  .v-connector {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 0;
+    padding: 4px 0;
+    position: relative;
+    min-height: 60px;
+  }
+
+  .arrow-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    max-width: 220px;
+    gap: 0;
+    font-size: 0.62rem;
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.04em;
+    padding: 4px 6px;
+  }
+
+  .arrow-line {
+    width: 2px;
+    flex: 1;
+    min-height: 14px;
+    position: relative;
+  }
+
+  .arrow-line.money  { background: var(--money); }
+  .arrow-line.goods  { background: var(--goods); }
+  .arrow-line.data   { background: var(--data); background: repeating-linear-gradient(180deg, var(--data) 0,var(--data) 5px,transparent 5px,transparent 9px); }
+  .arrow-line.float  { background: var(--float); }
+  .arrow-line.multi  { background: linear-gradient(180deg, var(--money) 0%, var(--float) 100%); }
+
+  .arrow-head {
+    width: 0; height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+  }
+  .arrow-head.down.money  { border-top: 8px solid var(--money); }
+  .arrow-head.down.goods  { border-top: 8px solid var(--goods); }
+  .arrow-head.down.data   { border-top: 8px solid var(--data); }
+  .arrow-head.down.float  { border-top: 8px solid var(--float); }
+  .arrow-head.down.multi  { border-top: 8px solid var(--float); }
+  .arrow-head.up.money    { border-bottom: 8px solid var(--money); }
+  .arrow-head.up.float    { border-bottom: 8px solid var(--float); }
+
+  .arrow-label {
+    font-size: 0.58rem;
+    padding: 2px 5px;
+    border-radius: 3px;
+    white-space: nowrap;
+    font-weight: 600;
+    max-width: 120px;
+    text-align: center;
+  }
+
+  .arrow-label.money    { color: var(--money);    background: rgba(0,229,160,0.08); }
+  .arrow-label.goods    { color: var(--goods);    background: rgba(245,197,66,0.08); }
+  .arrow-label.data     { color: var(--data);     background: rgba(255,123,84,0.08); }
+  .arrow-label.float    { color: var(--float);    background: rgba(84,197,248,0.08); }
+  .arrow-label.multi    { color: var(--float);    background: rgba(84,197,248,0.08); }
+
+  /* HORIZONTAL FLOW BANDS */
+  .h-flow-band {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin: 8px 0;
+    background: var(--panel);
+    font-size: 0.66rem;
+    font-family: 'IBM Plex Mono', monospace;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .h-flow-band .band-label {
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .h-flow-band .band-steps {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+    color: #94a3b8;
+  }
+
+  .step-node {
+    padding: 2px 9px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.62rem;
+    white-space: nowrap;
+  }
+
+  .step-arrow {
+    font-size: 0.9rem;
+    color: var(--muted);
+  }
+
+  /* WATERFALL BOX */
+  .waterfall {
+    background: var(--panel);
+    border: 1px solid var(--float);
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 16px 0;
+  }
+
+  .waterfall h3 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--float);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+
+  .waterfall-steps {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .w-step {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .w-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+
+  .w-arrow { color: var(--muted); font-size: 0.9rem; }
+
+  /* SECTION DIVIDER */
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    text-align: center;
+    padding: 6px 0 2px;
+  }
+
+  /* WALLET DETAIL BOX */
+  .wallet-detail {
+    background: rgba(84,197,248,0.04);
+    border: 1px solid rgba(84,197,248,0.25);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 8px 0;
+    font-size: 0.68rem;
+  }
+
+  .wallet-detail h3 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--float);
+    margin-bottom: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .wallet-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .wallet-row:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+  .wallet-icon {
+    font-size: 1.1rem;
+    width: 24px;
+    text-align: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .wallet-info strong {
+    display: block;
+    font-size: 0.68rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+
+  .wallet-info span {
+    font-size: 0.63rem;
+    color: #94a3b8;
+    line-height: 1.5;
+  }
+
+  /* MAX WIDTH WRAPPER */
+  .max-w {
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  /* GRID for middle actors */
+  .actor-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    max-width: 960px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .top-row, .bottom-row {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    max-width: 960px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  .top-row .node, .bottom-row .node {
+    max-width: 400px;
+  }
+
+  /* REPAYMENT FLOWS — special bidirectional section */
+  .repayment-band {
+    background: rgba(0,229,160,0.04);
+    border: 1px solid rgba(0,229,160,0.2);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin: 8px 0;
+    font-size: 0.67rem;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .repayment-band h3 {
+    color: var(--money);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.68rem;
+    margin-bottom: 10px;
+  }
+
+  .rep-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 7px;
+    flex-wrap: wrap;
+  }
+
+  .rep-row:last-child { margin-bottom: 0; }
+
+  .rep-badge {
+    font-size: 0.61rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 700;
+    white-space: nowrap;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .rep-arrow { color: var(--money); font-weight: 700; }
+  .rep-note { color: #64748b; font-size: 0.6rem; }
+
+  @media (max-width: 700px) {
+    .actor-grid { grid-template-columns: 1fr; }
+    .top-row, .bottom-row { flex-direction: column; align-items: center; }
+    .node { min-width: 0; max-width: 100%; }
+    .waterfall-steps { flex-direction: column; align-items: flex-start; }
+  }
+</style>
+</head>
+<body>
+
+<div class="max-w">
+
+  <h1>E-AVCFP · Ecosystem Diagram</h1>
+  <p class="subtitle">Agriculture Value Chain Financing Platform — Full Actor & Flow Blueprint</p>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-line" style="background:var(--money)"></div> Money Flow
+    </div>
+    <div class="legend-item">
+      <div class="legend-line" style="background:var(--goods)"></div> Goods Flow
+    </div>
+    <div class="legend-item">
+      <div class="legend-line dashed"></div> Data Flow
+    </div>
+    <div class="legend-item">
+      <div class="legend-line" style="background:var(--float)"></div> Float / Wallet Flow
+    </div>
+    <div class="legend-item">
+      <div class="legend-line" style="background:var(--anchor)"></div> Approval / Auth
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       LAYER 1 — BANK (Master Wallet Owner)
+  ══════════════════════════════════════════════ -->
+  <div class="section-label">① Financing Source</div>
+
+  <div class="top-row">
+    <div class="node bank" style="max-width:520px; width:100%;">
+      <div class="node-title">🏦 Bank / Financier</div>
+      <ul class="node-activities">
+        <li>Owns &amp; operates the <strong style="color:var(--float)">Master Ecosystem Wallet</strong></li>
+        <li>Issues revolving credit / bulk financing facility to VC Anchor</li>
+        <li>Sets float governance rules, disbursement limits &amp; exposure caps</li>
+        <li>Books loans on Core Banking System (CBS)</li>
+        <li>Receives principal + interest repayment via settlement waterfall</li>
+        <li>Monitors ecosystem-level NPL, float utilization &amp; risk exposure</li>
+        <li>Integrates with: CBS · Mobile Money · Insurance · Weather APIs</li>
+      </ul>
+      <span class="node-tag" style="background:rgba(96,165,250,0.12); color:var(--bank); border:1px solid rgba(96,165,250,0.3);">MASTER WALLET CUSTODIAN</span>
+    </div>
+  </div>
+
+  <!-- Connector Bank → Master Wallet -->
+  <div class="v-connector" style="max-width:960px; margin:0 auto;">
+    <div class="arrow-col" style="max-width:520px;">
+      <div class="arrow-label float">Float Allocation · Credit Facility Disbursement</div>
+      <div class="arrow-line float" style="min-height:22px;"></div>
+      <div class="arrow-head down float"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       LAYER 2 — MASTER WALLET (Bank-held)
+  ══════════════════════════════════════════════ -->
+  <div class="section-label">② Master Ecosystem Wallet (Bank-Controlled)</div>
+
+  <div class="top-row">
+    <div class="node wallet" style="max-width:520px; width:100%; border-width:2px; border-style:dashed;">
+      <div class="node-title">🏛️ Master Ecosystem Wallet</div>
+      <ul class="node-activities">
+        <li>Held &amp; controlled by the <strong>Bank</strong></li>
+        <li>Central float pool for all ecosystem disbursements</li>
+        <li>Sub-wallets attached per actor: Anchor · Farmers · Suppliers · Aggregators</li>
+        <li>Enforces disbursement rules &amp; settlement waterfall logic</li>
+        <li>Pays Suppliers &amp; Aggregators <em>only upon Anchor approval</em></li>
+        <li>Real-time float utilization dashboard &amp; threshold alerts</li>
+        <li>Idle float detection + concentration anomaly alerts</li>
+      </ul>
+      <span class="node-tag" style="background:rgba(84,197,248,0.1); color:var(--float); border:1px solid rgba(84,197,248,0.3);">CONTROLLED DISBURSEMENT HUB</span>
+    </div>
+  </div>
+
+  <!-- Connector Master Wallet → Sub-Wallets -->
+  <div class="v-connector" style="max-width:960px; margin:0 auto;">
+    <div class="arrow-col" style="max-width:520px;">
+      <div class="arrow-label float">Sub-Wallet Allocation (Anchor approval required for Suppliers &amp; Aggregators)</div>
+      <div class="arrow-line float" style="min-height:22px;"></div>
+      <div class="arrow-head down float"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       WALLET DETAIL BREAKDOWN
+  ══════════════════════════════════════════════ -->
+  <div class="wallet-detail max-w" style="margin-bottom:12px;">
+    <h3>Sub-Wallet Structure per Actor</h3>
+    <div class="wallet-row">
+      <div class="wallet-icon">⚓</div>
+      <div class="wallet-info">
+        <strong style="color:var(--anchor)">Anchor Sub-Wallet</strong>
+        <span>Receives: Buyer payments for produce + Farmer loan repayments.<br>
+        Sends: Approval signal to Master Wallet to release funds to Suppliers &amp; Aggregators. Repays <strong style="color:var(--float)">Master Wallet</strong> (principal + interest only) — Master Wallet settles to Bank via waterfall.<br>
+        <strong style="color:var(--anchor)">Retains: Anchor commission — stays on Anchor Sub-Wallet after waterfall settlement.</strong></span>
+      </div>
+    </div>
+    <div class="wallet-row">
+      <div class="wallet-icon">🌾</div>
+      <div class="wallet-info">
+        <strong style="color:var(--farmer)">Farmer Sub-Wallets</strong>
+        <span>Receives: Input financing (disbursed directly to Supplier via Master Wallet). Seasonal crop advances.<br>
+        Sends: Repayment to Anchor Sub-Wallet at harvest (deducted from produce payment).</span>
+      </div>
+    </div>
+    <div class="wallet-row">
+      <div class="wallet-icon">🏭</div>
+      <div class="wallet-info">
+        <strong style="color:var(--supplier)">Supplier Sub-Wallets</strong>
+        <span>Receives: Full input financing from Master Wallet (100% of input cost, paid directly upon Anchor approval). Bank loan covers the full amount.<br>
+        <strong style="color:var(--float)">Note: Master Wallet retains 20% of input cost at disbursement — not paid out immediately.</strong><br>
+        Receives at settlement: 20% contribution paid back from Master Wallet once produce is delivered &amp; verified.<br>
+        Delivers inputs to Farmers.</span>
+      </div>
+    </div>
+    <div class="wallet-row">
+      <div class="wallet-icon">🚛</div>
+      <div class="wallet-info">
+        <strong style="color:var(--aggregator)">Aggregator Sub-Wallets</strong>
+        <span>Receives: Transport &amp; aggregation fees from Master Wallet upon Anchor approval.<br>
+        Sends: Aggregated produce to VC Anchor. Delivery confirmation triggers fee release.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Connector to VC Anchor -->
+  <div class="v-connector" style="max-width:960px; margin:0 auto;">
+    <div class="arrow-col" style="max-width:520px;">
+      <div class="arrow-label float">Sub-Wallets activate within VC Anchor ecosystem</div>
+      <div class="arrow-line multi" style="min-height:22px;"></div>
+      <div class="arrow-head down multi"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       LAYER 3 — VC ANCHOR (Central Hub)
+  ══════════════════════════════════════════════ -->
+  <div class="section-label">③ VC Anchor — Ecosystem Orchestrator</div>
+
+  <div class="top-row">
+    <div class="node anchor" style="max-width:620px; width:100%;">
+      <div class="node-title">⚓ VC Anchor / Processor / Buyer</div>
+      <ul class="node-activities">
+        <li>Central hub of the entire value chain ecosystem</li>
+        <li>Holds its own <strong style="color:var(--anchor)">Anchor Sub-Wallet</strong> (within Master Wallet)</li>
+        <li><strong style="color:var(--money)">RECEIVES MONEY:</strong> Buyer payments · Farmer repayments (into Anchor Sub-Wallet)</li>
+        <li><strong style="color:var(--anchor)">RETAINS:</strong> Commission stays on Anchor Sub-Wallet after waterfall</li>
+        <li><strong style="color:var(--float)">APPROVES:</strong> Master Wallet releases 80% to Suppliers upfront · retains 20% until settlement · pays 20% back to Suppliers at settlement</li>
+        <li><strong style="color:var(--anchor)">APPROVES:</strong> Supplier payment releases from Master Wallet</li>
+        <li><strong style="color:var(--anchor)">APPROVES:</strong> Aggregator fee releases from Master Wallet</li>
+        <li>Off-take agreements with Farmers &amp; Retailers</li>
+        <li>Monitors: Purchase volume · Recovery ratio · Contract adherence</li>
+        <li>Commission earned stays on Anchor Sub-Wallet — not passed to Bank</li>
+        <li>Submits ecosystem creation, credit, float requests for bank approval</li>
+      </ul>
+      <span class="node-tag" style="background:rgba(192,132,252,0.12); color:var(--anchor); border:1px solid rgba(192,132,252,0.3);">ECOSYSTEM ORCHESTRATOR · APPROVAL NODE</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       CONNECTOR LAYER — ANCHOR TO ACTORS
+  ══════════════════════════════════════════════ -->
+  <div class="v-connector" style="max-width:960px; margin:0 auto; min-height:40px;">
+    <div class="arrow-col">
+      <div class="arrow-label goods" style="font-size:0.55rem;">Inputs delivered</div>
+      <div class="arrow-line goods" style="min-height:18px;"></div>
+      <div class="arrow-head down goods"></div>
+    </div>
+    <div class="arrow-col">
+      <div class="arrow-label float" style="font-size:0.55rem;">Financing disbursed via MW</div>
+      <div class="arrow-line float" style="min-height:18px;"></div>
+      <div class="arrow-head down float"></div>
+    </div>
+    <div class="arrow-col">
+      <div class="arrow-label float" style="font-size:0.55rem;">Fees via MW (on approval)</div>
+      <div class="arrow-line float" style="min-height:18px;"></div>
+      <div class="arrow-head down float"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       LAYER 4 — ACTORS GRID
+  ══════════════════════════════════════════════ -->
+  <div class="section-label">④ Value Chain Actors</div>
+
+  <div class="actor-grid">
+
+    <!-- SUPPLIERS -->
+    <div class="node supplier">
+      <div class="node-title">🏭 Input Suppliers</div>
+      <ul class="node-activities">
+        <li>Seeds, fertilizers, machinery, agri-inputs</li>
+        <li>Pre-approved supplier credit limit</li>
+        <li>Receives <strong>80% of input cost</strong> upfront from Master Wallet (upon Anchor approval)</li>
+        <li>Anchor approves each release from Master Wallet</li>
+        <li>Delivers inputs to Farmers</li>
+        <li>At settlement: receives <strong style="color:var(--float)">20% back from Master Wallet</strong> once delivery verified</li>
+        <li>Reconciliation tracked per transaction</li>
+      </ul>
+      <span class="node-tag" style="background:rgba(251,191,36,0.1); color:var(--supplier); border:1px solid rgba(251,191,36,0.3);">PAID VIA MASTER WALLET</span>
+    </div>
+
+    <!-- FARMERS -->
+    <div class="node farmer">
+      <div class="node-title">🌾 Farmers / Producers</div>
+      <ul class="node-activities">
+        <li>Primary producers — grow crops</li>
+        <li>Linked to Anchor via off-take agreement</li>
+        <li>Input financing: loan goes directly to Supplier</li>
+        <li>Alternative credit scoring: mobile data · cooperative history · yield records</li>
+        <li>Seasonal repayment at harvest (deducted from produce sale)</li>
+        <li>Repayment flows into <strong style="color:var(--anchor)">Anchor Sub-Wallet</strong></li>
+        <li>Data: production records → VC Anchor</li>
+      </ul>
+      <span class="node-tag" style="background:rgba(74,222,128,0.1); color:var(--farmer); border:1px solid rgba(74,222,128,0.3);">REPAYS → ANCHOR WALLET</span>
+    </div>
+
+    <!-- AGGREGATORS -->
+    <div class="node aggregator">
+      <div class="node-title">🚛 Aggregators / Transporters</div>
+      <ul class="node-activities">
+        <li>Collect &amp; transport produce from Farmers to VC Anchor</li>
+        <li>Aggregation &amp; logistics services</li>
+        <li>Money disbured from Master Wallet <em>upon Anchor approval</em></li>
+        <li>Quality checking &amp; Grading</li>
+        <li>Delivery confirmation triggers payment release</li>
+        <li>Route optimization &amp; quantity tracking</li>
+        
+        <li>Data: delivery records → VC Anchor</li>
+        <li>Side-selling pattern detection via EWS</li>
+      </ul>
+      <span class="node-tag" style="background:rgba(248,113,113,0.1); color:var(--aggregator); border:1px solid rgba(248,113,113,0.3);">PAID VIA MASTER WALLET</span>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       GOODS FLOW BAND — Upward
+  ══════════════════════════════════════════════ -->
+  <div class="h-flow-band" style="margin:14px 0; border-color:rgba(245,197,66,0.25);">
+    <div class="band-label" style="color:var(--goods);">📦 Goods Flow</div>
+    <div class="band-steps">
+      <span class="step-node" style="background:rgba(251,191,36,0.1);color:var(--supplier);">Suppliers</span>
+      <span class="step-arrow">→</span>
+      <span class="step-node" style="background:rgba(74,222,128,0.1);color:var(--farmer);">Farmers (inputs)</span>
+      <span class="step-arrow">→</span>
+      <span class="step-node" style="background:rgba(248,113,113,0.1);color:var(--aggregator);">Aggregators (produce)</span>
+      <span class="step-arrow">→</span>
+      <span class="step-node" style="background:rgba(192,132,252,0.1);color:var(--anchor);">VC Anchor</span>
+      <span class="step-arrow">→</span>
+      <span class="step-node" style="background:rgba(52,211,153,0.1);color:var(--retailer);">Retailers / Buyers</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       CONNECTOR — TO RETAILERS
+  ══════════════════════════════════════════════ -->
+  <div class="v-connector" style="max-width:960px; margin:0 auto; gap:80px;">
+    <div class="arrow-col">
+      <div class="arrow-label goods">Produce delivered</div>
+      <div class="arrow-line goods" style="min-height:18px;"></div>
+      <div class="arrow-head down goods"></div>
+    </div>
+    <div class="arrow-col">
+      <div class="arrow-label money">Payment for produce</div>
+      <div class="arrow-line money" style="min-height:18px;"></div>
+      <div class="arrow-head up money"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       LAYER 5 — RETAILERS / BUYERS
+  ══════════════════════════════════════════════ -->
+  <div class="section-label">⑤ Off-take Market</div>
+
+  <div class="bottom-row">
+    <div class="node retailer" style="max-width:480px; width:100%;">
+      <div class="node-title">🛒 Retailers / Buyers / Off-takers</div>
+      <ul class="node-activities">
+        <li>Purchase produce from VC Anchor at agreed contract price</li>
+        <li>Payment flows into <strong style="color:var(--anchor)">Anchor Sub-Wallet</strong></li>
+        <li>Contract-based purchasing (off-take agreements)</li>
+        <li>Volume &amp; quality verification at delivery</li>
+        <li>Buyer payment triggers settlement waterfall in Master Wallet</li>
+      </ul>
+      <span class="node-tag" style="background:rgba(52,211,153,0.1); color:var(--retailer); border:1px solid rgba(52,211,153,0.3);">PAYS INTO ANCHOR WALLET</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       REPAYMENT FLOWS
+  ══════════════════════════════════════════════ -->
+  <div style="height:16px;"></div>
+  <div class="section-label">⑥ Repayment &amp; Inflows into Anchor Sub-Wallet</div>
+
+  <div class="repayment-band">
+    <h3>💰 Anchor Sub-Wallet — Inflow Sources</h3>
+    <div class="rep-row">
+      <span class="rep-badge" style="background:rgba(52,211,153,0.12);color:var(--retailer);border:1px solid rgba(52,211,153,0.3);">RETAILERS/BUYERS</span>
+      <span class="rep-arrow">→</span>
+      <span class="rep-badge" style="background:rgba(192,132,252,0.1);color:var(--anchor);border:1px solid rgba(192,132,252,0.3);">ANCHOR SUB-WALLET</span>
+      <span class="rep-note">Full produce payment at contract price</span>
+    </div>
+    <div class="rep-row">
+      <span class="rep-badge" style="background:rgba(74,222,128,0.1);color:var(--farmer);border:1px solid rgba(74,222,128,0.3);">FARMERS</span>
+      <span class="rep-arrow">→</span>
+      <span class="rep-badge" style="background:rgba(192,132,252,0.1);color:var(--anchor);border:1px solid rgba(192,132,252,0.3);">ANCHOR SUB-WALLET</span>
+      <span class="rep-note">Loan repayment deducted from harvest proceeds</span>
+    </div>
+    <div class="rep-row" style="background:rgba(84,197,248,0.04); border:1px solid rgba(84,197,248,0.2); border-radius:6px; padding:8px 10px;">
+      <span class="rep-badge" style="background:rgba(84,197,248,0.1);color:var(--float);border:1px solid rgba(84,197,248,0.3);">MASTER WALLET</span>
+      <span class="rep-arrow" style="color:var(--float);">RETAINS</span>
+      <span class="rep-badge" style="background:rgba(251,191,36,0.1);color:var(--supplier);border:1px solid rgba(251,191,36,0.3);">20% of Supplier Cost</span>
+      <span class="rep-note" style="color:var(--float);">Held back at disbursement — not paid to Supplier upfront</span>
+    </div>
+    <div class="rep-row" style="background:rgba(84,197,248,0.04); border:1px solid rgba(84,197,248,0.2); border-radius:6px; padding:8px 10px;">
+      <span class="rep-badge" style="background:rgba(84,197,248,0.1);color:var(--float);border:1px solid rgba(84,197,248,0.3);">MASTER WALLET</span>
+      <span class="rep-arrow" style="color:var(--float);">→ at settlement →</span>
+      <span class="rep-badge" style="background:rgba(251,191,36,0.1);color:var(--supplier);border:1px solid rgba(251,191,36,0.3);">SUPPLIERS (20% paid back)</span>
+      <span class="rep-note">Supplier receives retained 20% from Master Wallet once delivery &amp; harvest verified</span>
+    </div>
+    <div class="rep-row" style="margin-top:8px; padding-top:8px; border-top:1px solid var(--border);">
+      <span class="rep-badge" style="background:rgba(192,132,252,0.1);color:var(--anchor);border:1px solid rgba(192,132,252,0.3);">ANCHOR SUB-WALLET</span>
+      <span class="rep-arrow">→</span>
+      <span class="rep-badge" style="background:rgba(84,197,248,0.1);color:var(--float);border:1px solid rgba(84,197,248,0.3);">MASTER WALLET</span>
+      <span class="rep-note" style="color:var(--float); font-weight:600;">(Principal + Interest only — commission stays on Anchor Sub-Wallet)</span>
+      <span class="rep-arrow">→</span>
+      <span class="rep-badge" style="background:rgba(96,165,250,0.12);color:var(--bank);border:1px solid rgba(96,165,250,0.3);">BANK</span>
+      <span class="rep-note">Waterfall: Insurance → Supplier Recovery → Principal → Interest → Farmer Residual</span>
+    </div>
+    <div class="rep-row" style="background:rgba(192,132,252,0.05); border:1px solid rgba(192,132,252,0.2); border-radius:6px; padding:8px 10px; margin-top:6px;">
+      <span class="rep-badge" style="background:rgba(192,132,252,0.15);color:var(--anchor);border:1px solid rgba(192,132,252,0.4);">ANCHOR COMMISSION</span>
+      <span class="rep-arrow" style="color:var(--anchor);">✓ RETAINED</span>
+      <span class="rep-badge" style="background:rgba(192,132,252,0.1);color:var(--anchor);border:1px solid rgba(192,132,252,0.3);">ANCHOR SUB-WALLET</span>
+      <span class="rep-note" style="color:var(--anchor);">Commission stays on Anchor Sub-Wallet — not passed to Master Wallet or Bank</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SETTLEMENT WATERFALL
+  ══════════════════════════════════════════════ -->
+  <div class="section-label">⑦ Settlement Waterfall (Configurable Priority Order)</div>
+
+  <div class="waterfall">
+    <h3>🌊 Settlement Waterfall Engine — Deduction Hierarchy</h3>
+    <div class="waterfall-steps">
+      <div class="w-step">
+        <span class="w-badge" style="color:#f472b6; border-color:#f472b6; background:rgba(244,114,182,0.08);">1 · Insurance</span>
+        <span class="w-arrow">→</span>
+      </div>
+      <div class="w-step">
+        <span class="w-badge" style="color:var(--supplier); border-color:var(--supplier); background:rgba(251,191,36,0.08);">2 · Supplier Recovery</span>
+        <span class="w-arrow">→</span>
+      </div>
+      <div class="w-step">
+        <span class="w-badge" style="color:var(--bank); border-color:var(--bank); background:rgba(96,165,250,0.08);">3 · Bank Principal</span>
+        <span class="w-arrow">→</span>
+      </div>
+      <div class="w-step">
+        <span class="w-badge" style="color:var(--bank); border-color:var(--bank); background:rgba(96,165,250,0.05);">4 · Bank Interest</span>
+        <span class="w-arrow">→</span>
+      </div>
+      <div class="w-step">
+        <span class="w-badge" style="color:var(--farmer); border-color:var(--farmer); background:rgba(74,222,128,0.08);">5 · Farmer Residual</span>
+      </div>
+    </div>
+    <div style="margin-top:12px; padding:8px 12px; background:rgba(192,132,252,0.07); border:1px solid rgba(192,132,252,0.25); border-radius:6px; font-size:0.63rem; font-family:'IBM Plex Mono',monospace; color:var(--anchor);">
+      ⚓ Anchor Commission — <strong>NOT part of waterfall.</strong> Retained directly on Anchor Sub-Wallet after all waterfall deductions are complete.
+    </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       DATA FLOWS
+  ══════════════════════════════════════════════ -->
+  <div class="section-label">⑧ Data Flows &amp; Monitoring</div>
+
+  <div class="h-flow-band" style="border-color:rgba(255,123,84,0.25); flex-direction:column; gap:8px;">
+    <div class="band-label" style="color:var(--data);">📡 Data Flow (Dashed)</div>
+    <div class="band-steps">
+      <span class="step-node" style="background:rgba(74,222,128,0.08);color:var(--farmer);">Farmers</span>
+      <span class="step-arrow" style="color:var(--data);">⇢</span>
+      <span class="step-node" style="background:rgba(192,132,252,0.08);color:var(--anchor);">VC Anchor</span>
+      <span class="rep-note" style="color:#64748b; font-size:0.6rem;">Production records · Yield · Repayment history</span>
+    </div>
+    <div class="band-steps">
+      <span class="step-node" style="background:rgba(248,113,113,0.08);color:var(--aggregator);">Aggregators</span>
+      <span class="step-arrow" style="color:var(--data);">⇢</span>
+      <span class="step-node" style="background:rgba(192,132,252,0.08);color:var(--anchor);">VC Anchor</span>
+      <span class="rep-note" style="color:#64748b; font-size:0.6rem;">Delivery records · Quantity · Route data</span>
+    </div>
+    <div class="band-steps">
+      <span class="step-node" style="background:rgba(251,191,36,0.08);color:var(--supplier);">Suppliers</span>
+      <span class="step-arrow" style="color:var(--data);">⇢</span>
+      <span class="step-node" style="background:rgba(192,132,252,0.08);color:var(--anchor);">VC Anchor</span>
+      <span class="rep-note" style="color:#64748b; font-size:0.6rem;">Input delivery · Usage tracking · Reconciliation</span>
+    </div>
+    <div class="band-steps">
+      <span class="step-node" style="background:rgba(192,132,252,0.08);color:var(--anchor);">VC Anchor</span>
+      <span class="step-arrow" style="color:var(--data);">⇢</span>
+      <span class="step-node" style="background:rgba(96,165,250,0.08);color:var(--bank);">Bank (CBS)</span>
+      <span class="step-arrow" style="color:var(--data);">⇢</span>
+      <span class="step-node" style="background:rgba(255,123,84,0.08);color:var(--data);">Risk Dashboard</span>
+      <span class="rep-note" style="color:#64748b; font-size:0.6rem;">Ecosystem exposure · Float utilization · EWS triggers</span>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       COMPLETE MONEY FLOW SUMMARY
+  ══════════════════════════════════════════════ -->
+  <div class="section-label">⑨ Complete Money Flow Summary</div>
+
+  <div class="h-flow-band" style="border-color:rgba(0,229,160,0.25); flex-direction:column; gap:8px;">
+    <div class="band-label" style="color:var(--money);">💵 Money Flow (Full Cycle)</div>
+    <div class="band-steps">
+      <span class="rep-note" style="color:var(--muted);">OUTBOUND →</span>
+      <span class="step-node" style="background:rgba(96,165,250,0.1);color:var(--bank);">Bank</span>
+      <span class="step-arrow">→</span>
+      <span class="step-node" style="background:rgba(84,197,248,0.1);color:var(--float);">Master Wallet</span>
+      <span class="step-arrow">→</span>
+      <span class="step-node" style="background:rgba(192,132,252,0.1);color:var(--anchor);">Anchor Approval</span>
+      <span class="step-arrow">→</span>
+      <span class="step-node" style="background:rgba(251,191,36,0.1);color:var(--supplier);">Suppliers (80% upfront · 20% at settlement)</span>
+      <span class="step-arrow">&amp;</span>
+      <span class="step-node" style="background:rgba(248,113,113,0.1);color:var(--aggregator);">Aggregators</span>
+    </div>
+    <div class="band-steps">
+      <span class="rep-note" style="color:var(--muted);">INBOUND ←</span>
+      <span class="step-node" style="background:rgba(52,211,153,0.1);color:var(--retailer);">Retailers</span>
+      <span class="step-arrow">→</span>
+      <span class="step-node" style="background:rgba(192,132,252,0.1);color:var(--anchor);">Anchor Wallet</span>
+      <span class="step-arrow">+</span>
+      <span class="step-node" style="background:rgba(74,222,128,0.1);color:var(--farmer);">Farmer Repay</span>
+<span class="step-arrow">→ repays →</span>
+      <span class="step-node" style="background:rgba(84,197,248,0.15);color:var(--float); border:1px solid rgba(84,197,248,0.4); font-weight:700;">Master Wallet<br><span style="font-size:0.56rem;font-weight:400;">(Principal + Interest)</span></span>
+      <span class="step-arrow">→ waterfall →</span>
+      <span class="step-node" style="background:rgba(96,165,250,0.1);color:var(--bank);">Bank (Repaid)</span>
+    </div>
+  </div>
+
+  <div style="height:32px;"></div>
+  <div style="text-align:center; font-family:'IBM Plex Mono',monospace; font-size:0.58rem; color:var(--muted); letter-spacing:0.06em;">
+    E-AVCFP · Ecosystem-Driven Agriculture Value Chain Financing Platform · Blueprint v1.0
+  </div>
+  <div style="height:24px;"></div>
+
+</div>
+</body>
+</html>
